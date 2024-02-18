@@ -1,0 +1,16 @@
+.popup {
+    display: none;
+}
+.building{
+    margin-left: 5%;
+}
+.popup-trigger:hover + .popup {
+    display: block;
+    color: red;
+  }
+.UpgradeImage{
+
+}
+.BuildingImage{
+    
+}
