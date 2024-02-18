@@ -1,24 +1,77 @@
-import initData from './data.json' assert { type: 'json' };
+function updateBContent(data,number){
+    var amount = data.amount;
+    var cost = data.price;
+    var production = data.base_production*data.modifier;
+    number = number.toString()
+    document.getElementById("amount").innerHTML = amount.toString();
+    document.getElementById(("cost"+number)).innerHTML = cost.toString();
+    document.getElementById("production"+number).innerHTML = production.toString()
+}
+function updateUContent(data,number){
+    //unhide content
+    //make it use space
+    
+    var elem = document.getElementById("upgrade"+number.toString());
+    elem.style.display = "block";
+    var cost = data.price;
+    var bonus = data.bonus;
+    var effected_buidlings = data.effected_buidlings;
+    var src = document.getElementById("UImage"+number.toString()).src;
+    src = src.slice(-5);
+    if (src.toString() != number.toString()+".png"){
+        console.log("upüdate")
+        document.getElementById("UImage"+number.toString()).src = "./upgrades/"+number.toString()+".png";
+    }
+    document.getElementById("cost"+number.toString()).innerText = "Upgrade Cost: "+cost.toString();
+    var effect = "This upgrade multiplies the profit from "+effected_buidlings.toString()+" by a factor of "+bonus.toString()+".";
+    document.getElementById("effect"+number.toString()).innerText = effect;
+}
+function updateMoney(money){
+    document.getElementById("MoneyCounter").innerText = toString("money")+" Bugs collected so far";
+    // Updates the "money amount showed on screen"
+}
+function update(){
+    game.update();
+    for(let i=0;i<game.buildings.length;i++){
+        updateBContent(game.buildings[i].data,i);
+    }
+    var pos = 0;
+    for(let i=0;i<game.upgrades.length;i++){
+        if(game.GeneralData.bougth_upgrades.includes(i)){
+            continue;
+        }
+        updateUContent(game.upgrades[i],pos);
+        pos++;
+    }
+    updateMoney(game.GeneralData.money);
+}
+function click(){
+    game.money += 1;
+}
+
+
+
 
 class  Game{
     constructor(){
-        this.buldings = [];
+        this.startTime = performance.now();
+        this.buildings = [];
         this.upgrades = []
         if(window.localStorage.getItem("Init") == null){
             this.InitialiseData();   
             this.GeneralData = new Data();
-            
+
         }
         else{
             this.GeneralData = LoadData();
             this.FetchData();
         }
-        this.startTime = performance.now();
-        this.update();
+        
+        //this.update();
     }
     // returns all the data neccesarry to describe a building
     getBuldingInfo(index){
-        return this.buldings[index].data;
+        return this.buildings[index].data;
     }
     getUpgradeInfo(index){
         return this.upgrades[index].data;
@@ -26,7 +79,7 @@ class  Game{
     // Functions to buy items
     buyBuldings(buldingIndex,amount){
         money = this.GeneralData.money;
-        money = this.buldings[buldingIndex].buy(amount,initData[price_multiplier],money);
+        money = this.buildings[buldingIndex].buy(amount,initData[price_multiplier],money);
         this.GeneralData.money = money;
     }
     buyUpgrade(upgradeIndex){
@@ -38,17 +91,16 @@ class  Game{
     // The main function
     // Updates the money and calls itself
     update(){
-        additional_money = 0;
-        for(let i = 0;i<this.buldings.length;i++){
-            additional_money += this.buldings[i].calc_Production();
+        var additional_money = 0;
+        for(let i = 0;i<this.buildings.length;i++){
+            additional_money += this.buildings[i].calc_Production();
         }
         var endTime = performance.now();
         var TimeDiff = (endTime-this.startTime)/1000;
         this.GeneralData.money += additional_money*TimeDiff;
-        this.removeUsedUpgrades();
         setTimeout(300);
         this.startTime = endTime;
-        this.update();
+        //this.update();
     }
     // Saving and Loading the data
     // If no data was save init with the basic starting data
@@ -56,35 +108,38 @@ class  Game{
         var upgrades = initData["upgrades"];
         var buldings = initData["buldings"];
         for(let i=0;i<buldings.length;i++){
-            this.buldings.push(LoadBuildingData(buldings[i].keyname));
+            var loadData = LoadBuildingData(buldings[i].keyname)
+            this.buildings.push(new Bulding(null,null,null,null,loadData));
         }
         for(let i=0;i<upgrades.length;i++){
 
-            jsonData = upgrades[i];
+            var jsonData = upgrades[i];
             newData = new Upgrade(jsonData.bonus,jsonData.effected_buidlings,jsonData.price);
-            this.buldings.push(newData);
+            this.upgrades.push(newData);
         }
         
     }
     InitialiseData(){
         var upgrades = initData["upgrades"];
         var buldings = initData["buldings"];
+
         for(let i=0;i<buldings.length;i++){
-            jsonData = buldings[i];
-            newData = new Bulding(jsonData.base_production,jsonData.name,jsonData.position,jsonData.price);
-            this.buldings.push(newData);
+            var jsonData = buldings[i];
+
+            var newData = new Bulding(jsonData.base_production,jsonData.name,jsonData.position,jsonData.price);
+            this.buildings.push(newData);
         }
         for(let i=0;i<upgrades.length;i++){
-            jsonData = upgrades[i];
-            newData = new Upgrade(jsonData.bonus,jsonData.effected_buidlings,jsonData.price);
-            this.buldings.push(newData);
+            var jsonData = upgrades[i];
+            var newData = new Upgrade(jsonData.bonus,jsonData.effected_buidlings,jsonData.price);
+            this.upgrades.push(newData);
         }
     }
     saveGameData(){
         SaveData(this.GeneralData);
         var buldingKeys = initData["buldings"];
-        for(let i = 0;i<this.buldings.length;i++){
-            SaveBuildingData(buldingKeys[i].keyname,this.buldings[i]);
+        for(let i = 0;i<this.buildings.length;i++){
+            SaveBuildingData(buldingKeys[i].keyname,this.buildings[i].data);
         }
     }
 }
@@ -109,6 +164,7 @@ class Data{
     bougth_upgrades = []
 }
 class BuldingData{
+    base_production = 3;
     constructor(base_production,name,position, price){
         this.base_production = base_production;
         this.name = name;
@@ -120,16 +176,22 @@ class BuldingData{
 }
 
 class Bulding{
+    data = null;
     constructor(base_production,name,position, price,data = null){
         if(data == null){
-            this.data = BuldingData(base_production,name,position, price)
+            this.data = new BuldingData(base_production,name,position, price);
+
         }
-        this.data = data;
+        else{
+
+            this.data = data;
+        }
     }
     addBonus(bonus){
         this.data.modifier = this.data.modifier + bonus;
     }
     calc_Production(){
+
         return this.data.base_production * this.data.amount * this.data.modifier;
     }
     buy(amount,price_multiplier,money){
@@ -168,7 +230,7 @@ class Upgrade{
     }
     apply_bonus(buldings){
         for(let i = 0; i<buldings.length;i++){
-            if(this.effected_buidlings.contains(buldings[i].name)){
+            if(this.effected_buidlings.includes(buldings[i].name)){
                 buldings[i].addBonus(this.bonus);
             }
         }
@@ -181,3 +243,6 @@ class Upgrade{
         return money - this.price;
     }
 }
+
+var game = new Game();
+setInterval((update),100);
