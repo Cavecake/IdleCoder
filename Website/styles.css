@@ -1,16 +1,100 @@
-.popup {
-    display: none;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
 }
-.building{
-    margin-left: 5%;
-}
-.popup-trigger:hover + .popup {
-    display: block;
-    color: red;
-  }
-.UpgradeImage{
 
+#gameContainer {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-.BuildingImage{
-    
+
+#header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#MoneyCounter {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+#buildings, #upgrades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adjust gap between items */
+    margin-bottom: 20px;
+}
+
+.building-item{
+    flex: 1 1 100px; /* Flex properties: grow, shrink, basis */
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
+.upgrade-item {
+    flex: 1 1 200px; /* Flex properties: grow, shrink, basis */
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+.building-item:hover, .upgrade-item:hover {
+    background-color: #e0e0e0;
+}
+
+.clicked {
+    background-color: #c0e7fa; /* Example color for click visual feedback */
+}
+
+#winScreen {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#infoBox {
+    display: inline-block;
+    position: relative;
+}
+
+#infoIcon {
+    cursor: pointer;
+    font-size: 20px;
+    color: #333;
+}
+
+#infoContent {
+    position: absolute;
+    top: 30px;
+    right: -10px;
+    background-color: #ffffcc;
+    padding: 10px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    width: 200px;
+    display: none;
+    z-index: 1000;
+}
+
+#infoBox:hover #infoContent {
+    display: block;
 }

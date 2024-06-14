@@ -1,29 +1,41 @@
 <!DOCTYPE html>
-<html lang="de">
-  <head>
-    <link rel="stylesheet" href="styles.css">
-    <meta charset="utf-8">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-  </head>
-  <body>
-    <div>
-      <h id = "MoneyCounter"></h>
-      	<p> Testing</p>
-        <p id = "amount"></p>
-        <p id = "cost0"></p>
-        <p id = "production0"></p>
+    <title>Idle Debugger</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="header">
+            <h1>Idle Debugger</h1>
+            <div id="MoneyCounter">0 Bugs collected so far</div>
+            <button id="resetGameButton">Reset Game</button>
+            <button id="findBugButton" onclick="findAndFixBug()">Find a Bug</button> <!-- Added button for manual bug finding -->
+            <div id="infoBox">
+              <i class="fas fa-info-circle" id="infoIcon"></i>
+              <div id="infoContent">
+                  <h3>Game Info</h3>
+                  <p>Welcome to Idle Debugger! Collect bugs and upgrade your tools to reach your goal.</p>
+                  <p>Goal: Collect 1,000,000 bugs to win!</p>
+                  <p>Tip: Click on buildings to buy them and increase bug production.</p>
+              </div>
+            </div>
+          </div>
+        <div id="buildings">
+            <!-- Building items will be dynamically added here -->
+        </div>
+        <div id="upgrades">
+            <!-- Upgrade items will be dynamically added here -->
+        </div>
+        <div id="winScreen">
+          <h2>Congratulations!</h2>
+          <p>You've collected a million bugs!</p>
+      </div>
     </div>
-    <div id="upgrade0">
-      Upgrades
-      <img id = "UImage0" src = "data.js"></img>
-      <p id = "cost0"></p>
-      <p id = "effect0"></p>
-    </div>
-    <div>
-      <script src = "data.js"></script>
-      <script src="main.js"></script>
-    </div>
-    <p>Currently in development</p>
-  </body>
+
+    <script src="main.js"></script>
+</body>
 </html>
